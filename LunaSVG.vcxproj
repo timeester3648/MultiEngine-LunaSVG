@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Distribution|x64">
+      <Configuration>Distribution</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E55CF2F6-513C-7192-5A54-FC68C6B2D7F3}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>LunaSVG</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\..\bin\Debug\LunaSVG\</OutDir>
+    <IntDir>..\..\bin\intermediate\Debug\LunaSVG\</IntDir>
+    <TargetName>LunaSVG</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>..\..\bin\Release\LunaSVG\</OutDir>
+    <IntDir>..\..\bin\intermediate\Release\LunaSVG\</IntDir>
+    <TargetName>LunaSVG</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'">
+    <OutDir>..\..\bin\Distribution\LunaSVG\</OutDir>
+    <IntDir>..\..\bin\intermediate\Distribution\LunaSVG\</IntDir>
+    <TargetName>LunaSVG</TargetName>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4103;5232;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;SPDLOG_FMT_EXTERNAL;MLE_ENABLE_INTRINSICS=true;MLE_ENABLE_AVX512_INTRINSICS=false;NOMINMAX;MLE_PLATFORM_WINDOWS;WIN32;_SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING;MLE_DEBUG_BUILD;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>include;3rdparty\plutovg;3rdparty\software;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4103;5232;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;SPDLOG_FMT_EXTERNAL;MLE_ENABLE_INTRINSICS=true;MLE_ENABLE_AVX512_INTRINSICS=false;NOMINMAX;MLE_PLATFORM_WINDOWS;WIN32;_SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING;MLE_RELEASE_BUILD;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>include;3rdparty\plutovg;3rdparty\software;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Ot %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DisableSpecificWarnings>4103;5232;5105;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <PreprocessorDefinitions>BOOST_ALL_NO_LIB;SPDLOG_FMT_EXTERNAL;MLE_ENABLE_INTRINSICS=true;MLE_ENABLE_AVX512_INTRINSICS=false;NOMINMAX;MLE_PLATFORM_WINDOWS;WIN32;_SILENCE_CXX23_ALIGNED_STORAGE_DEPRECATION_WARNING;MLE_DISTRIBUTION_BUILD;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>include;3rdparty\plutovg;3rdparty\software;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Ot %(AdditionalOptions)</AdditionalOptions>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="3rdparty\plutovg\plutovg-private.h" />
+    <ClInclude Include="3rdparty\plutovg\plutovg.h" />
+    <ClInclude Include="3rdparty\software\sw_ft_math.h" />
+    <ClInclude Include="3rdparty\software\sw_ft_raster.h" />
+    <ClInclude Include="3rdparty\software\sw_ft_stroker.h" />
+    <ClInclude Include="3rdparty\software\sw_ft_types.h" />
+    <ClInclude Include="include\lunasvg.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="3rdparty\plutovg\plutovg-blend.c" />
+    <ClCompile Include="3rdparty\plutovg\plutovg-dash.c" />
+    <ClCompile Include="3rdparty\plutovg\plutovg-geometry.c" />
+    <ClCompile Include="3rdparty\plutovg\plutovg-paint.c" />
+    <ClCompile Include="3rdparty\plutovg\plutovg-rle.c" />
+    <ClCompile Include="3rdparty\plutovg\plutovg.c" />
+    <ClCompile Include="3rdparty\software\sw_ft_math.c" />
+    <ClCompile Include="3rdparty\software\sw_ft_raster.c" />
+    <ClCompile Include="3rdparty\software\sw_ft_stroker.c" />
+    <ClCompile Include="source\canvas.cpp" />
+    <ClCompile Include="source\clippathelement.cpp" />
+    <ClCompile Include="source\defselement.cpp" />
+    <ClCompile Include="source\element.cpp" />
+    <ClCompile Include="source\gelement.cpp" />
+    <ClCompile Include="source\geometryelement.cpp" />
+    <ClCompile Include="source\graphicselement.cpp" />
+    <ClCompile Include="source\layoutcontext.cpp" />
+    <ClCompile Include="source\lunasvg.cpp" />
+    <ClCompile Include="source\markerelement.cpp" />
+    <ClCompile Include="source\maskelement.cpp" />
+    <ClCompile Include="source\paintelement.cpp" />
+    <ClCompile Include="source\parser.cpp" />
+    <ClCompile Include="source\property.cpp" />
+    <ClCompile Include="source\stopelement.cpp" />
+    <ClCompile Include="source\styledelement.cpp" />
+    <ClCompile Include="source\styleelement.cpp" />
+    <ClCompile Include="source\svgelement.cpp" />
+    <ClCompile Include="source\symbolelement.cpp" />
+    <ClCompile Include="source\useelement.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

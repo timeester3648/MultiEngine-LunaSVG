@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{3E7DA5C5-2A4A-00D1-5363-EE783F8F355F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\plutovg">
+      <UniqueIdentifier>{9E5FFAA5-8A58-19F8-B38A-FE7C9FE2F803}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\software">
+      <UniqueIdentifier>{583201EE-C448-FF83-0DC0-8AA57915D00B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{76FF3A1C-62A1-65F2-4B5C-7946379DEC42}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="3rdparty\plutovg\plutovg-private.h">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\plutovg\plutovg.h">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\software\sw_ft_math.h">
+      <Filter>3rdparty\software</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\software\sw_ft_raster.h">
+      <Filter>3rdparty\software</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\software\sw_ft_stroker.h">
+      <Filter>3rdparty\software</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\software\sw_ft_types.h">
+      <Filter>3rdparty\software</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lunasvg.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="3rdparty\plutovg\plutovg-blend.c">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\plutovg\plutovg-dash.c">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\plutovg\plutovg-geometry.c">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\plutovg\plutovg-paint.c">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\plutovg\plutovg-rle.c">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\plutovg\plutovg.c">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\software\sw_ft_math.c">
+      <Filter>3rdparty\software</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\software\sw_ft_raster.c">
+      <Filter>3rdparty\software</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\software\sw_ft_stroker.c">
+      <Filter>3rdparty\software</Filter>
+    </ClCompile>
+    <ClCompile Include="source\canvas.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\clippathelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\defselement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\element.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\gelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\geometryelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphicselement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\layoutcontext.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lunasvg.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\markerelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\maskelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\paintelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\parser.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\property.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\stopelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\styledelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\styleelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\svgelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\symbolelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\useelement.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
