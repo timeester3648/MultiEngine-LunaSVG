@@ -292,12 +292,12 @@ std::unique_ptr<Document> Document::loadFromData(const std::string& string)
 
 std::unique_ptr<Document> Document::loadFromData(const char* data, std::size_t size)
 {
-    ParseDocument parser;
-    if(!parser.parse(data, size))
+    TreeBuilder builder;
+    if(!builder.parse(data, size))
         return nullptr;
 
-    auto root = parser.layout();
-    if(!root || root->children.empty())
+    auto root = builder.build();
+    if(root == nullptr)
         return nullptr;
 
     std::unique_ptr<Document> document(new Document);
