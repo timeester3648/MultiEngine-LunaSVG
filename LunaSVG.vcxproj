@@ -148,24 +148,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="3rdparty\plutovg\plutovg-ft-math.h" />
+    <ClInclude Include="3rdparty\plutovg\plutovg-ft-raster.h" />
+    <ClInclude Include="3rdparty\plutovg\plutovg-ft-stroker.h" />
+    <ClInclude Include="3rdparty\plutovg\plutovg-ft-types.h" />
     <ClInclude Include="3rdparty\plutovg\plutovg-private.h" />
     <ClInclude Include="3rdparty\plutovg\plutovg.h" />
-    <ClInclude Include="3rdparty\software\sw_ft_math.h" />
-    <ClInclude Include="3rdparty\software\sw_ft_raster.h" />
-    <ClInclude Include="3rdparty\software\sw_ft_stroker.h" />
-    <ClInclude Include="3rdparty\software\sw_ft_types.h" />
     <ClInclude Include="include\lunasvg.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3rdparty\plutovg\plutovg-blend.c" />
     <ClCompile Include="3rdparty\plutovg\plutovg-dash.c" />
+    <ClCompile Include="3rdparty\plutovg\plutovg-ft-math.c" />
+    <ClCompile Include="3rdparty\plutovg\plutovg-ft-raster.c" />
+    <ClCompile Include="3rdparty\plutovg\plutovg-ft-stroker.c" />
     <ClCompile Include="3rdparty\plutovg\plutovg-geometry.c" />
     <ClCompile Include="3rdparty\plutovg\plutovg-paint.c" />
     <ClCompile Include="3rdparty\plutovg\plutovg-rle.c" />
     <ClCompile Include="3rdparty\plutovg\plutovg.c" />
-    <ClCompile Include="3rdparty\software\sw_ft_math.c" />
-    <ClCompile Include="3rdparty\software\sw_ft_raster.c" />
-    <ClCompile Include="3rdparty\software\sw_ft_stroker.c" />
     <ClCompile Include="source\canvas.cpp" />
     <ClCompile Include="source\clippathelement.cpp" />
     <ClCompile Include="source\defselement.cpp" />

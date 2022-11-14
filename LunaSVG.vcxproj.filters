@@ -7,9 +7,6 @@
     <Filter Include="3rdparty\plutovg">
       <UniqueIdentifier>{9E5FFAA5-8A58-19F8-B38A-FE7C9FE2F803}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3rdparty\software">
-      <UniqueIdentifier>{583201EE-C448-FF83-0DC0-8AA57915D00B}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{89AF369E-F58E-B539-FEA6-40106A051C9B}</UniqueIdentifier>
     </Filter>
@@ -18,23 +15,23 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3rdparty\plutovg\plutovg-ft-math.h">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\plutovg\plutovg-ft-raster.h">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\plutovg\plutovg-ft-stroker.h">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\plutovg\plutovg-ft-types.h">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClInclude>
     <ClInclude Include="3rdparty\plutovg\plutovg-private.h">
       <Filter>3rdparty\plutovg</Filter>
     </ClInclude>
     <ClInclude Include="3rdparty\plutovg\plutovg.h">
       <Filter>3rdparty\plutovg</Filter>
-    </ClInclude>
-    <ClInclude Include="3rdparty\software\sw_ft_math.h">
-      <Filter>3rdparty\software</Filter>
-    </ClInclude>
-    <ClInclude Include="3rdparty\software\sw_ft_raster.h">
-      <Filter>3rdparty\software</Filter>
-    </ClInclude>
-    <ClInclude Include="3rdparty\software\sw_ft_stroker.h">
-      <Filter>3rdparty\software</Filter>
-    </ClInclude>
-    <ClInclude Include="3rdparty\software\sw_ft_types.h">
-      <Filter>3rdparty\software</Filter>
     </ClInclude>
     <ClInclude Include="include\lunasvg.h">
       <Filter>include</Filter>
@@ -45,6 +42,15 @@
       <Filter>3rdparty\plutovg</Filter>
     </ClCompile>
     <ClCompile Include="3rdparty\plutovg\plutovg-dash.c">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\plutovg\plutovg-ft-math.c">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\plutovg\plutovg-ft-raster.c">
+      <Filter>3rdparty\plutovg</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\plutovg\plutovg-ft-stroker.c">
       <Filter>3rdparty\plutovg</Filter>
     </ClCompile>
     <ClCompile Include="3rdparty\plutovg\plutovg-geometry.c">
@@ -58,15 +64,6 @@
     </ClCompile>
     <ClCompile Include="3rdparty\plutovg\plutovg.c">
       <Filter>3rdparty\plutovg</Filter>
-    </ClCompile>
-    <ClCompile Include="3rdparty\software\sw_ft_math.c">
-      <Filter>3rdparty\software</Filter>
-    </ClCompile>
-    <ClCompile Include="3rdparty\software\sw_ft_raster.c">
-      <Filter>3rdparty\software</Filter>
-    </ClCompile>
-    <ClCompile Include="3rdparty\software\sw_ft_stroker.c">
-      <Filter>3rdparty\software</Filter>
     </ClCompile>
     <ClCompile Include="source\canvas.cpp">
       <Filter>source</Filter>
