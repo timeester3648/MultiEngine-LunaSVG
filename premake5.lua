@@ -22,6 +22,9 @@ project "LunaSVG"
 		"./3rdparty/software"
 	}
 
+	filter "system:windows"
+		disablewarnings { "4267" }
+
  	filter "configurations:Debug"
 		defines { "MLE_DEBUG_BUILD", "DEBUG" }
 		runtime "Debug"
