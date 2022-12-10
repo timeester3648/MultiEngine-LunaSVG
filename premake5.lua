@@ -22,5 +22,5 @@ project "LunaSVG"
 		"./3rdparty/software"
 	}
 
-	filter "action:vs*"
+	filter "toolset:msc"
 		disablewarnings { "4267" }
