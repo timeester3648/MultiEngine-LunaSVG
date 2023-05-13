@@ -22,5 +22,9 @@ project "LunaSVG"
 		"./3rdparty/software"
 	}
 
+	defines {
+		"LUNASVG_STATIC_DEFINE"
+	}
+
 	filter "toolset:msc"
 		disablewarnings { "4267" }
