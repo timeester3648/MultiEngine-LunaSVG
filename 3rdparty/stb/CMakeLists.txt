@@ -1,4 +1,4 @@
 target_include_directories(lunasvg
-PUBLIC
+PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}"
 )

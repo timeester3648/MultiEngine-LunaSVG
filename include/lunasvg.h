@@ -27,16 +27,22 @@
 #include <string>
 #include <cstdint>
 
-#include <lunasvg_export.h>
-#define LUNASVG_API LUNASVG_EXPORT
+#if defined(_MSC_VER) && defined(LUNASVG_SHARED)
+#ifdef LUNASVG_EXPORT
+#define LUNASVG_API __declspec(dllexport)
+#else
+#define LUNASVG_API __declspec(dllimport)
+#endif
+#else
+#define LUNASVG_API
+#endif
 
 namespace lunasvg {
 
 class Rect;
 class Matrix;
 
-class LUNASVG_API Box
-{
+class LUNASVG_API Box {
 public:
     Box() = default;
     Box(double x, double y, double w, double h);
@@ -54,8 +60,7 @@ public:
 
 class Transform;
 
-class LUNASVG_API Matrix
-{
+class LUNASVG_API Matrix {
 public:
     Matrix() = default;
     Matrix(double a, double b, double c, double d, double e, double f);
@@ -92,11 +97,10 @@ public:
     double f{0};
 };
 
-class LUNASVG_API Bitmap
-{
+class LUNASVG_API Bitmap {
 public:
     /**
-     * @note Bitmap format is ARGB Premultiplied.
+     * @note Bitmap format is ARGB32 Premultiplied.
      */
     Bitmap();
     Bitmap(std::uint8_t* data, std::uint32_t width, std::uint32_t height, std::uint32_t stride);
@@ -123,8 +127,7 @@ private:
 
 class LayoutSymbol;
 
-class LUNASVG_API Document
-{
+class LUNASVG_API Document {
 public:
     /**
      * @brief Creates a document from a file
@@ -201,7 +204,9 @@ public:
      */
     Bitmap renderToBitmap(std::uint32_t width = 0, std::uint32_t height = 0, std::uint32_t backgroundColor = 0x00000000) const;
 
+    Document(Document&&);
     ~Document();
+
 private:
     Document();
 

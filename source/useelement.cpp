@@ -61,7 +61,7 @@ void UseElement::layout(LayoutContext* context, LayoutContainer* current) const
         return;
 
     LayoutBreaker layoutBreaker(context, ref);
-    auto group = std::make_unique<GElement>();
+    auto group = makeUnique<GElement>();
     group->parent = parent;
     group->properties = properties;
 
@@ -77,14 +77,11 @@ void UseElement::layout(LayoutContext* context, LayoutContainer* current) const
     transform += ')';
     group->set(PropertyID::Transform, transform, 0x10);
 
-    if(ref->id == ElementID::Svg || ref->id == ElementID::Symbol)
-    {
+    if(ref->id == ElementID::Svg || ref->id == ElementID::Symbol) {
         auto element = ref->cloneElement<SVGElement>();
         transferWidthAndHeight(element.get());
         group->addChild(std::move(element));
-    }
-    else
-    {
+    } else {
         group->addChild(ref->clone());
     }
 

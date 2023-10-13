@@ -1,4 +1,4 @@
-[![Releases](https://img.shields.io/badge/Version-2.3.5-orange.svg)](https://github.com/sammycage/lunasvg/releases)
+[![Releases](https://img.shields.io/badge/Version-2.3.8-orange.svg)](https://github.com/sammycage/lunasvg/releases)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sammycage/lunasvg/blob/master/LICENSE)
 [![Build Status](https://github.com/sammycage/lunasvg/actions/workflows/ci.yml/badge.svg)](https://github.com/sammycage/lunasvg/actions)
 
@@ -65,7 +65,7 @@ make install
 
 ## Demo
 
-While building lunasvg example it generates a simple SVG to PNG converter which can be used to convert SVG file to PNG file.
+By enabling the `LUNASVG_BUILD_EXAMPLES` option during the CMake configuration, the lunasvg build includes a simple SVG to PNG converter for easy conversion of SVG files to PNG format.
 
 Run Demo.
 ```
