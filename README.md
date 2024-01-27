@@ -1,4 +1,4 @@
-[![Releases](https://img.shields.io/badge/Version-2.3.8-orange.svg)](https://github.com/sammycage/lunasvg/releases)
+[![Releases](https://img.shields.io/badge/Version-2.3.9-orange.svg)](https://github.com/sammycage/lunasvg/releases)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/sammycage/lunasvg/blob/master/LICENSE)
 [![Build Status](https://github.com/sammycage/lunasvg/actions/workflows/ci.yml/badge.svg)](https://github.com/sammycage/lunasvg/actions)
 
@@ -82,3 +82,4 @@ svg2png [filename] [resolution] [bgColor]
 - [ObEngine](https://github.com/ObEngine/ObEngine)
 - [OTTO](https://github.com/bitfieldaudio/OTTO)
 - [EmulationStation-DE](https://gitlab.com/es-de/emulationstation-de)
+- [SvgBooga](https://github.com/etodanik/SvgBooga/tree/main)
