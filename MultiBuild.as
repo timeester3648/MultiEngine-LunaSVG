@@ -26,7 +26,7 @@ void main(MultiBuild::Workspace& workspace) {
 	properties.defines("LUNASVG_STATIC_DEFINE");
 
 	{
-		MultiBuild::ScopedFilter _(workspace, "project.compiler:VisualCpp");
+		MultiBuild::ScopedFilter _(project, "project.compiler:VisualCpp");
 		properties.disable_warnings({ "4267" });
 	}
 }
