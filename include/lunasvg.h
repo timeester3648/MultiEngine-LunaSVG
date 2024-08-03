@@ -23,6 +23,8 @@
 #ifndef LUNASVG_H
 #define LUNASVG_H
 
+#define LUNASVG_BUILD_STATIC
+
 #include <cstdint>
 #include <memory>
 #include <string>
