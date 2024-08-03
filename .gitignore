@@ -5,4 +5,5 @@ build/*
 **.sln
 **.vcxproj
 **.vcxproj.user
-**.vcxproj.filters
+**.vcxproj.filters/build
+*.user
