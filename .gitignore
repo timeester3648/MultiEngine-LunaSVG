@@ -1,9 +1,8 @@
-.vscode
-build/*
+/build
+*.user
 
 # exclude project files
 **.sln
 **.vcxproj
 **.vcxproj.user
-**.vcxproj.filters/build
-*.user
+**.vcxproj.filters
