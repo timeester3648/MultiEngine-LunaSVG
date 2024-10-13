@@ -14,9 +14,9 @@ void main(MultiBuild::Workspace& workspace) {
 	properties.files({
 		"./include/**.h",
 		"./source/**.cpp",
-		"./3rdparty/**.h",
-		"./3rdparty/**.c"
 	});
+
+	properties.dependencies("plutovg");
 
 	properties.include_directories({
 		"./3rdparty/plutovg",
