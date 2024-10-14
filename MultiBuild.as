@@ -18,15 +18,10 @@ void main(MultiBuild::Workspace& workspace) {
 
 	properties.dependencies("plutovg");
 
-	properties.include_directories({
-		"./3rdparty/plutovg",
-		"./3rdparty/software"
-	});
-
 	properties.defines("LUNASVG_STATIC_DEFINE");
 
 	{
 		MultiBuild::ScopedFilter _(project, "project.compiler:VisualCpp");
-		properties.disable_warnings({ "4267" });
+		properties.disable_warnings({ "4267", "4244" });
 	}
 }
