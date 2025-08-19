@@ -18,7 +18,10 @@ void main(MultiBuild::Workspace& workspace) {
 
 	properties.dependencies("plutovg");
 
-	properties.defines("LUNASVG_STATIC_DEFINE");
+	properties.defines({
+		"LUNASVG_STATIC_DEFINE",
+		"PLUTOVG_BUILD_STATIC"
+	});
 
 	{
 		MultiBuild::ScopedFilter _(project, "project.compiler:VisualCpp");
