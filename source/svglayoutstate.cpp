@@ -99,9 +99,15 @@ static float parseNumberOrPercentage(std::string_view input, bool allowPercentag
     float value;
     if(!parseNumber(input, value))
         return defaultValue;
-    if(allowPercentage && skipDelimiter(input, '%'))
-        value /= 100.f;
-    return !input.empty() ? defaultValue : std::clamp(value, 0.f, 1.f);
+    if(allowPercentage) {
+        if(skipDelimiter(input, '%'))
+            value /= 100.f;
+        value = std::clamp(value, 0.f, 1.f);
+    }
+
+    if(!input.empty())
+        return defaultValue;
+    return value;
 }
 
 static Length parseLength(const std::string_view& input, LengthNegativeMode mode, const Length& defaultValue)
@@ -110,6 +116,17 @@ static Length parseLength(const std::string_view& input, LengthNegativeMode mode
     if(!value.parse(input, mode))
         value = defaultValue;
     return value;
+}
+
+static BaselineShift parseBaselineShift(const std::string_view& input)
+{
+    if(input.compare("baseline") == 0)
+        return BaselineShift::Type::Baseline;
+    if(input.compare("sub") == 0)
+        return BaselineShift::Type::Sub;
+    if(input.compare("super") == 0)
+        return BaselineShift::Type::Super;
+    return parseLength(input, LengthNegativeMode::Allow, Length(0.f, LengthUnits::None));
 }
 
 static LengthList parseDashArray(std::string_view input)
@@ -128,6 +145,13 @@ static LengthList parseDashArray(std::string_view input)
         values.push_back(std::move(value));
     } while(skipOptionalSpacesOrComma(input));
     return values;
+}
+
+static Length parseLengthOrNormal(std::string_view input)
+{
+    if(input.compare("normal") == 0)
+        return Length(0, LengthUnits::None);
+    return parseLength(input, LengthNegativeMode::Allow, Length(0, LengthUnits::None));
 }
 
 static float parseFontSize(std::string_view input, const SVGLayoutState* state)
@@ -185,11 +209,32 @@ static Overflow parseOverflow(const std::string_view& input)
     return parseEnumValue(input, entries, Overflow::Visible);
 }
 
+static PointerEvents parsePointerEvents(const std::string_view& input)
+{
+    static const SVGEnumerationEntry<PointerEvents> entries[] = {
+        {PointerEvents::None,"none"},
+        {PointerEvents::Auto,"auto"},
+        {PointerEvents::Stroke,"stroke"},
+        {PointerEvents::Fill,"fill"},
+        {PointerEvents::Painted,"painted"},
+        {PointerEvents::Visible,"visible"},
+        {PointerEvents::VisibleStroke,"visibleStroke"},
+        {PointerEvents::VisibleFill,"visibleFill"},
+        {PointerEvents::VisiblePainted,"visiblePainted"},
+        {PointerEvents::BoundingBox,"bounding-box"},
+        {PointerEvents::All,"all"},
+    };
+
+    return parseEnumValue(input, entries, PointerEvents::Auto);
+}
+
 static FontWeight parseFontWeight(const std::string_view& input)
 {
     static const SVGEnumerationEntry<FontWeight> entries[] = {
         {FontWeight::Normal, "normal"},
         {FontWeight::Bold, "bold"},
+        {FontWeight::Bold, "bolder"},
+        {FontWeight::Normal, "lighter"},
         {FontWeight::Normal, "100"},
         {FontWeight::Normal, "200"},
         {FontWeight::Normal, "300"},
@@ -215,6 +260,46 @@ static FontStyle parseFontStyle(const std::string_view& input)
     return parseEnumValue(input, entries, FontStyle::Normal);
 }
 
+static AlignmentBaseline parseAlignmentBaseline(const std::string_view& input)
+{
+    static const SVGEnumerationEntry<AlignmentBaseline> entries[] = {
+        {AlignmentBaseline::Auto, "auto"},
+        {AlignmentBaseline::Baseline, "baseline"},
+        {AlignmentBaseline::BeforeEdge, "before-edge"},
+        {AlignmentBaseline::TextBeforeEdge, "text-before-edge"},
+        {AlignmentBaseline::Middle, "middle"},
+        {AlignmentBaseline::Central, "central"},
+        {AlignmentBaseline::AfterEdge, "after-edge"},
+        {AlignmentBaseline::TextAfterEdge, "text-after-edge"},
+        {AlignmentBaseline::Ideographic, "ideographic"},
+        {AlignmentBaseline::Alphabetic, "alphabetic"},
+        {AlignmentBaseline::Hanging, "hanging"},
+        {AlignmentBaseline::Mathematical, "mathematical"}
+    };
+
+    return parseEnumValue(input, entries, AlignmentBaseline::Auto);
+}
+
+static DominantBaseline parseDominantBaseline(const std::string_view& input)
+{
+    static const SVGEnumerationEntry<DominantBaseline> entries[] = {
+        {DominantBaseline::Auto, "auto"},
+        {DominantBaseline::UseScript, "use-script"},
+        {DominantBaseline::NoChange, "no-change"},
+        {DominantBaseline::ResetSize, "reset-size"},
+        {DominantBaseline::Ideographic, "ideographic"},
+        {DominantBaseline::Alphabetic, "alphabetic"},
+        {DominantBaseline::Hanging, "hanging"},
+        {DominantBaseline::Mathematical, "mathematical"},
+        {DominantBaseline::Central, "central"},
+        {DominantBaseline::Middle, "middle"},
+        {DominantBaseline::TextAfterEdge, "text-after-edge"},
+        {DominantBaseline::TextBeforeEdge, "text-before-edge"}
+    };
+
+    return parseEnumValue(input, entries, DominantBaseline::Auto);
+}
+
 static Direction parseDirection(const std::string_view& input)
 {
     static const SVGEnumerationEntry<Direction> entries[] = {
@@ -223,6 +308,33 @@ static Direction parseDirection(const std::string_view& input)
     };
 
     return parseEnumValue(input, entries, Direction::Ltr);
+}
+
+static WritingMode parseWritingMode(const std::string_view& input)
+{
+    static const SVGEnumerationEntry<WritingMode> entries[] = {
+        {WritingMode::Horizontal, "horizontal-tb"},
+        {WritingMode::Vertical, "vertical-rl"},
+        {WritingMode::Vertical, "vertical-lr"},
+        {WritingMode::Horizontal, "lr-tb"},
+        {WritingMode::Horizontal, "lr"},
+        {WritingMode::Horizontal, "rl-tb"},
+        {WritingMode::Horizontal, "rl"},
+        {WritingMode::Vertical, "tb-rl"},
+        {WritingMode::Vertical, "tb"}
+    };
+
+    return parseEnumValue(input, entries, WritingMode::Horizontal);
+}
+
+static TextOrientation parseTextOrientation(const std::string_view& input)
+{
+    static const SVGEnumerationEntry<TextOrientation> entries[] = {
+        {TextOrientation::Mixed, "mixed"},
+        {TextOrientation::Upright, "upright"}
+    };
+
+    return parseEnumValue(input, entries, TextOrientation::Mixed);
 }
 
 static TextAnchor parseTextAnchor(const std::string_view& input)
@@ -303,6 +415,8 @@ SVGLayoutState::SVGLayoutState(const SVGLayoutState& parent, const SVGElement* e
     , m_stroke_opacity(parent.stroke_opacity())
     , m_stroke_miterlimit(parent.stroke_miterlimit())
     , m_font_size(parent.font_size())
+    , m_letter_spacing(parent.letter_spacing())
+    , m_word_spacing(parent.word_spacing())
     , m_stroke_width(parent.stroke_width())
     , m_stroke_dashoffset(parent.stroke_dashoffset())
     , m_stroke_dasharray(parent.stroke_dasharray())
@@ -312,11 +426,15 @@ SVGLayoutState::SVGLayoutState(const SVGLayoutState& parent, const SVGElement* e
     , m_clip_rule(parent.clip_rule())
     , m_font_weight(parent.font_weight())
     , m_font_style(parent.font_style())
+    , m_dominant_baseline(parent.dominant_baseline())
     , m_text_anchor(parent.text_anchor())
     , m_white_space(parent.white_space())
+    , m_writing_mode(parent.writing_mode())
+    , m_text_orientation(parent.text_orientation())
     , m_direction(parent.direction())
     , m_visibility(parent.visibility())
-    , m_overflow(element->parent() ? Overflow::Hidden : Overflow::Visible)
+    , m_overflow(element->isRootElement() ? Overflow::Visible : Overflow::Hidden)
+    , m_pointer_events(parent.pointer_events())
     , m_marker_start(parent.marker_start())
     , m_marker_mid(parent.marker_mid())
     , m_marker_end(parent.marker_end())
@@ -358,6 +476,15 @@ SVGLayoutState::SVGLayoutState(const SVGLayoutState& parent, const SVGElement* e
         case PropertyID::Font_Size:
             m_font_size = parseFontSize(input, this);
             break;
+        case PropertyID::Letter_Spacing:
+            m_letter_spacing = parseLengthOrNormal(input);
+            break;
+        case PropertyID::Word_Spacing:
+            m_word_spacing = parseLengthOrNormal(input);
+            break;
+        case PropertyID::Baseline_Shift:
+            m_baseline_shit = parseBaselineShift(input);
+            break;
         case PropertyID::Stroke_Width:
             m_stroke_width = parseLength(input, LengthNegativeMode::Forbid, Length(1.f, LengthUnits::None));
             break;
@@ -385,14 +512,26 @@ SVGLayoutState::SVGLayoutState(const SVGLayoutState& parent, const SVGElement* e
         case PropertyID::Font_Style:
             m_font_style = parseFontStyle(input);
             break;
+        case PropertyID::Alignment_Baseline:
+            m_alignment_baseline = parseAlignmentBaseline(input);
+            break;
+        case PropertyID::Dominant_Baseline:
+            m_dominant_baseline = parseDominantBaseline(input);
+            break;
         case PropertyID::Direction:
             m_direction = parseDirection(input);
             break;
         case PropertyID::Text_Anchor:
             m_text_anchor = parseTextAnchor(input);
             break;
-        case PropertyID::WhiteSpace:
+        case PropertyID::White_Space:
             m_white_space = parseWhiteSpace(input);
+            break;
+        case PropertyID::Writing_Mode:
+            m_writing_mode = parseWritingMode(input);
+            break;
+        case PropertyID::Text_Orientation:
+            m_text_orientation = parseTextOrientation(input);
             break;
         case PropertyID::Display:
             m_display = parseDisplay(input);
@@ -402,6 +541,9 @@ SVGLayoutState::SVGLayoutState(const SVGLayoutState& parent, const SVGElement* e
             break;
         case PropertyID::Overflow:
             m_overflow = parseOverflow(input);
+            break;
+        case PropertyID::Pointer_Events:
+            m_pointer_events = parsePointerEvents(input);
             break;
         case PropertyID::Mask_Type:
             m_mask_type = parseMaskType(input);
@@ -434,7 +576,31 @@ Font SVGLayoutState::font() const
 {
     auto bold = m_font_weight == FontWeight::Bold;
     auto italic = m_font_style == FontStyle::Italic;
-    auto face = fontFaceCache()->getFontFace(m_font_family, bold, italic);
+
+    FontFace face;
+    std::string_view input(m_font_family);
+    while(!input.empty() && face.isNull()) {
+        auto family = input.substr(0, input.find(','));
+        input.remove_prefix(family.length());
+        if(!input.empty() && input.front() == ',')
+            input.remove_prefix(1);
+        stripLeadingAndTrailingSpaces(family);
+        if(!family.empty() && (family.front() == '\'' || family.front() == '"')) {
+            auto quote = family.front();
+            family.remove_prefix(1);
+            if(!family.empty() && family.back() == quote)
+                family.remove_suffix(1);
+            stripLeadingAndTrailingSpaces(family);
+        }
+
+        std::string font_family(family);
+        if(!font_family.empty()) {
+            face = fontFaceCache()->getFontFace(font_family, bold, italic);
+        }
+    }
+
+    if(face.isNull())
+        face = fontFaceCache()->getFontFace(emptyString, bold, italic);
     return Font(face, m_font_size);
 }
 

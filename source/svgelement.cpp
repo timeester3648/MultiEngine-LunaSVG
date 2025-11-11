@@ -10,11 +10,6 @@
 
 namespace lunasvg {
 
-SVGRootElement* SVGNode::rootElement() const
-{
-    return document()->rootElement();
-}
-
 ElementID elementid(const std::string_view& name)
 {
     static const struct {
@@ -58,12 +53,20 @@ SVGTextNode::SVGTextNode(Document* document)
 {
 }
 
+void SVGTextNode::setData(const std::string& data)
+{
+    rootElement()->setNeedsLayout();
+    m_data.assign(data);
+}
+
 std::unique_ptr<SVGNode> SVGTextNode::clone(bool deep) const
 {
     auto node = std::make_unique<SVGTextNode>(document());
     node->setData(m_data);
     return node;
 }
+
+const std::string emptyString;
 
 std::unique_ptr<SVGElement> SVGElement::create(Document* document, ElementID id)
 {
@@ -214,6 +217,7 @@ bool SVGElement::setAttribute(const Attribute& attribute)
 
 void SVGElement::parseAttribute(PropertyID id, const std::string& value)
 {
+    rootElement()->setNeedsLayout();
     if(auto property = getProperty(id)) {
         property->parse(value);
     }
@@ -221,9 +225,10 @@ void SVGElement::parseAttribute(PropertyID id, const std::string& value)
 
 SVGElement* SVGElement::previousElement() const
 {
-    if(!parent())
+    auto parent = parentElement();
+    if(parent == nullptr)
         return nullptr;
-    const auto& children = parent()->children();
+    const auto& children = parent->children();
     auto it = children.begin();
     auto end = children.end();
     SVGElement* element = nullptr;
@@ -241,9 +246,10 @@ SVGElement* SVGElement::previousElement() const
 
 SVGElement* SVGElement::nextElement() const
 {
-    if(!parent())
+    auto parent = parentElement();
+    if(parent == nullptr)
         return nullptr;
-    const auto& children = parent()->children();
+    const auto& children = parent->children();
     auto it = children.rbegin();
     auto end = children.rend();
     SVGElement* element = nullptr;
@@ -261,7 +267,7 @@ SVGElement* SVGElement::nextElement() const
 
 SVGNode* SVGElement::addChild(std::unique_ptr<SVGNode> child)
 {
-    child->setParent(this);
+    child->setParentElement(this);
     m_children.push_back(std::move(child));
     return &*m_children.back();
 }
@@ -352,6 +358,32 @@ SVGPaintElement* SVGElement::getPainter(const std::string_view& id) const
     return nullptr;
 }
 
+SVGElement* SVGElement::elementFromPoint(float x, float y)
+{
+    auto it = m_children.rbegin();
+    auto end = m_children.rend();
+    for(; it != end; ++it) {
+        auto child = toSVGElement(*it);
+        if(child && !child->isHiddenElement()) {
+            if(auto element = child->elementFromPoint(x, y)) {
+                return element;
+            }
+        }
+    }
+
+    if(isPointableElement()) {
+        auto transform = localTransform();
+        for(auto parent = parentElement(); parent; parent = parent->parentElement())
+            transform.postMultiply(parent->localTransform());
+        auto bbox = transform.mapRect(paintBoundingBox());
+        if(bbox.contains(x, y)) {
+            return this;
+        }
+    }
+
+    return nullptr;
+}
+
 void SVGElement::addProperty(SVGProperty& value)
 {
     m_properties.push_front(&value);
@@ -370,8 +402,8 @@ SVGProperty* SVGElement::getProperty(PropertyID id) const
 
 Size SVGElement::currentViewportSize() const
 {
-    auto parentElement = parent();
-    if(parentElement == nullptr) {
+    auto parent = parentElement();
+    if(parent == nullptr) {
         auto element = static_cast<const SVGSVGElement*>(this);
         const auto& viewBox = element->viewBox();
         if(viewBox.value().isValid())
@@ -379,8 +411,8 @@ Size SVGElement::currentViewportSize() const
         return Size(300, 150);
     }
 
-    if(parentElement->id() == ElementID::Svg) {
-        auto element = static_cast<const SVGSVGElement*>(parentElement);
+    if(parent->id() == ElementID::Svg) {
+        auto element = static_cast<const SVGSVGElement*>(parent);
         const auto& viewBox = element->viewBox();
         if(viewBox.value().isValid())
             return viewBox.value().size();
@@ -390,7 +422,7 @@ Size SVGElement::currentViewportSize() const
         return Size(width, height);
     }
 
-    return parentElement->currentViewportSize();
+    return parent->currentViewportSize();
 }
 
 void SVGElement::cloneChildren(SVGElement* parentElement) const
@@ -419,15 +451,16 @@ void SVGElement::build()
 
 void SVGElement::layoutElement(const SVGLayoutState& state)
 {
+    m_paintBoundingBox = Rect::Invalid;
+    m_clipper = getClipper(state.clip_path());
+    m_masker = getMasker(state.mask());
+    m_opacity = state.opacity();
+
     m_font_size = state.font_size();
     m_display = state.display();
     m_overflow = state.overflow();
     m_visibility = state.visibility();
-    m_opacity = state.opacity();
-
-    m_paintBoundingBox = Rect::Invalid;
-    m_clipper = getClipper(state.clip_path());
-    m_masker = getMasker(state.mask());
+    m_pointer_events = state.pointer_events();
 }
 
 void SVGElement::layoutChildren(SVGLayoutState& state)
@@ -477,6 +510,31 @@ bool SVGElement::isHiddenElement() const
     default:
         return false;
     }
+}
+
+bool SVGElement::isPointableElement() const
+{
+    if(m_pointer_events != PointerEvents::None
+        && m_visibility != Visibility::Hidden
+        && m_display != Display::None
+        && m_opacity != 0.f) {
+        switch(m_id) {
+        case ElementID::Line:
+        case ElementID::Rect:
+        case ElementID::Ellipse:
+        case ElementID::Circle:
+        case ElementID::Polyline:
+        case ElementID::Polygon:
+        case ElementID::Path:
+        case ElementID::Text:
+        case ElementID::Image:
+            return true;
+        default:
+            break;
+        }
+    }
+
+    return false;
 }
 
 SVGStyleElement::SVGStyleElement(Document* document)
@@ -587,9 +645,9 @@ Transform SVGSVGElement::localTransform() const
         lengthContext.valueForLength(m_height)
     };
 
-    if(parent())
-        return SVGGraphicsElement::localTransform() * Transform::translated(viewportRect.x, viewportRect.y) * viewBoxToViewTransform(viewportRect.size());
-    return viewBoxToViewTransform(viewportRect.size());
+    if(isRootElement())
+        return viewBoxToViewTransform(viewportRect.size());
+    return SVGGraphicsElement::localTransform() * Transform::translated(viewportRect.x, viewportRect.y) * viewBoxToViewTransform(viewportRect.size());
 }
 
 void SVGSVGElement::render(SVGRenderState& state) const
@@ -616,6 +674,13 @@ void SVGSVGElement::render(SVGRenderState& state) const
 SVGRootElement::SVGRootElement(Document* document)
     : SVGSVGElement(document)
 {
+}
+
+SVGRootElement* SVGRootElement::layoutIfNeeded()
+{
+    if(needsLayout())
+        forceLayout();
+    return this;
 }
 
 SVGElement* SVGRootElement::getElementById(const std::string_view& id) const
@@ -671,6 +736,12 @@ void SVGRootElement::layout(SVGLayoutState& state)
             m_intrinsicHeight = boundingBox.bottom();
         }
     }
+}
+
+void SVGRootElement::forceLayout()
+{
+    SVGLayoutState state;
+    layout(state);
 }
 
 SVGUseElement::SVGUseElement(Document* document)
@@ -748,12 +819,12 @@ std::unique_ptr<SVGElement> SVGUseElement::cloneTargetElement(SVGElement* target
     if(targetElement == this || isDisallowedElement(targetElement))
         return nullptr;
     const auto& idAttr = targetElement->getAttribute(PropertyID::Id);
-    auto parentElement = parent();
-    while(parentElement) {
-        auto attribute = parentElement->findAttribute(PropertyID::Id);
+    auto parent = parentElement();
+    while(parent) {
+        auto attribute = parent->findAttribute(PropertyID::Id);
         if(attribute && idAttr == attribute->value())
             return nullptr;
-        parentElement = parentElement->parent();
+        parent = parent->parentElement();
     }
 
     auto tagId = targetElement->id();
@@ -778,7 +849,6 @@ std::unique_ptr<SVGElement> SVGUseElement::cloneTargetElement(SVGElement* target
 
 SVGImageElement::SVGImageElement(Document* document)
     : SVGGraphicsElement(document, ElementID::Image)
-    , SVGURIReference(this)
     , m_x(PropertyID::X, LengthDirection::Horizontal, LengthNegativeMode::Allow, 0.f, LengthUnits::None)
     , m_y(PropertyID::Y, LengthDirection::Vertical, LengthNegativeMode::Allow, 0.f, LengthUnits::None)
     , m_width(PropertyID::Width, LengthDirection::Horizontal, LengthNegativeMode::Forbid, 100.f, LengthUnits::Percent)
@@ -841,10 +911,13 @@ static Bitmap loadImageResource(const std::string& href)
     return plutovg_surface_load_from_image_file(href.data());
 }
 
-void SVGImageElement::layoutElement(const SVGLayoutState& state)
+void SVGImageElement::parseAttribute(PropertyID id, const std::string& value)
 {
-    m_image = loadImageResource(hrefString());
-    SVGGraphicsElement::layoutElement(state);
+    if(id == PropertyID::Href) {
+        m_image = loadImageResource(value);
+    } else {
+        SVGGraphicsElement::parseAttribute(id, value);
+    }
 }
 
 SVGSymbolElement::SVGSymbolElement(Document* document)
@@ -1025,7 +1098,7 @@ void SVGClipPathElement::applyClipPath(SVGRenderState& state) const
             shapeElement = toSVGGeometryElement(element->firstChild());
         }
 
-        if(shapeElement == nullptr || shapeElement->isDisplayNone() || shapeElement->isVisibilityHidden())
+        if(shapeElement == nullptr || !shapeElement->isRenderable())
             continue;
         state->clipPath(shapeElement->path(), shapeElement->clip_rule(), clipTransform * shapeElement->localTransform());
         return;
@@ -1054,7 +1127,7 @@ bool SVGClipPathElement::requiresMasking() const
             shapeElement = toSVGGeometryElement(element->firstChild());
         }
 
-        if(shapeElement == nullptr || shapeElement->isDisplayNone() || shapeElement->isVisibilityHidden())
+        if(shapeElement == nullptr || !shapeElement->isRenderable())
             continue;
         if(prevShapeElement || shapeElement->clipper())
             return true;

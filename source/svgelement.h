@@ -1,13 +1,13 @@
 #ifndef LUNASVG_SVGELEMENT_H
 #define LUNASVG_SVGELEMENT_H
 
+#include "lunasvg.h"
+#include "svgproperty.h"
+
 #include <string>
 #include <forward_list>
 #include <list>
 #include <map>
-
-#include "svgproperty.h"
-#include "lunasvg.h"
 
 namespace lunasvg {
 
@@ -29,10 +29,13 @@ public:
     virtual bool isGeometryElement() const { return false; }
     virtual bool isTextPositioningElement() const { return false; }
 
-    SVGRootElement* rootElement() const;
     Document* document() const { return m_document; }
-    void setParent(SVGElement* parent) { m_parent = parent; }
-    SVGElement* parent() const { return m_parent; }
+    SVGRootElement* rootElement() const { return m_document->rootElement(); }
+
+    SVGElement* parentElement() const { return m_parentElement; }
+    void setParentElement(SVGElement* parent) { m_parentElement = parent; }
+
+    bool isRootElement() const { return m_parentElement == nullptr; }
 
     virtual std::unique_ptr<SVGNode> clone(bool deep) const = 0;
 
@@ -40,7 +43,7 @@ private:
     SVGNode(const SVGNode&) = delete;
     SVGNode& operator=(const SVGNode&) = delete;
     Document* m_document;
-    SVGElement* m_parent = nullptr;
+    SVGElement* m_parentElement = nullptr;
 };
 
 class SVGTextNode final : public SVGNode {
@@ -49,8 +52,8 @@ public:
 
     bool isTextNode() const final { return true; }
 
-    void setData(const std::string& data) { m_data = data; }
     const std::string& data() const { return m_data; }
+    void setData(const std::string& data);
 
     std::unique_ptr<SVGNode> clone(bool deep) const final;
 
@@ -117,6 +120,8 @@ class SVGPaintElement;
 class SVGLayoutState;
 class SVGRenderState;
 
+extern const std::string emptyString;
+
 class SVGElement : public SVGNode {
 public:
     static std::unique_ptr<SVGElement> create(Document* document, ElementID id);
@@ -139,6 +144,7 @@ public:
 
     SVGElement* previousElement() const;
     SVGElement* nextElement() const;
+
     SVGNode* addChild(std::unique_ptr<SVGNode> child);
     SVGNode* firstChild() const;
     SVGNode* lastChild() const;
@@ -157,6 +163,8 @@ public:
     SVGClipPathElement* getClipper(const std::string_view& id) const;
     SVGMaskElement* getMasker(const std::string_view& id) const;
     SVGPaintElement* getPainter(const std::string_view& id) const;
+
+    SVGElement* elementFromPoint(float x, float y);
 
     template<typename T>
     void transverse(T callback);
@@ -183,6 +191,7 @@ public:
     bool isVisibilityHidden() const { return m_visibility != Visibility::Visible; }
 
     bool isHiddenElement() const;
+    bool isPointableElement() const;
 
     const SVGClipPathElement* clipper() const { return m_clipper; }
     const SVGMaskElement* masker() const { return m_masker; }
@@ -191,20 +200,21 @@ public:
     bool isElement() const final { return true; }
 
 private:
+    mutable Rect m_paintBoundingBox = Rect::Invalid;
+    const SVGClipPathElement* m_clipper = nullptr;
+    const SVGMaskElement* m_masker = nullptr;
+    float m_opacity = 1.f;
+
     float m_font_size = 12.f;
     Display m_display = Display::Inline;
     Overflow m_overflow = Overflow::Visible;
     Visibility m_visibility = Visibility::Visible;
+    PointerEvents m_pointer_events = PointerEvents::Auto;
 
     ElementID m_id;
     AttributeList m_attributes;
     SVGPropertyList m_properties;
     SVGNodeList m_children;
-
-    mutable Rect m_paintBoundingBox = Rect::Invalid;
-    const SVGClipPathElement* m_clipper = nullptr;
-    const SVGMaskElement* m_masker = nullptr;
-    float m_opacity = 1.f;
 };
 
 inline const SVGElement* toSVGElement(const SVGNode* node)
@@ -229,13 +239,10 @@ inline SVGElement* toSVGElement(const std::unique_ptr<SVGNode>& node)
 template<typename T>
 inline void SVGElement::transverse(T callback)
 {
-    if(!callback(this))
-        return;
+    callback(this);
     for(const auto& child : m_children) {
         if(auto element = toSVGElement(child)) {
             element->transverse(callback);
-        } else if(!callback(child.get())) {
-            return;
         }
     }
 }
@@ -334,14 +341,21 @@ public:
     float intrinsicWidth() const { return m_intrinsicWidth; }
     float intrinsicHeight() const { return m_intrinsicHeight; }
 
+    void setNeedsLayout() { m_intrinsicWidth = -1.f; }
+    bool needsLayout() const { return m_intrinsicWidth == -1.f; }
+
+    SVGRootElement* layoutIfNeeded();
+
     SVGElement* getElementById(const std::string_view& id) const;
     void addElementById(const std::string& id, SVGElement* element);
     void layout(SVGLayoutState& state) final;
 
+    void forceLayout();
+
 private:
     std::map<std::string, SVGElement*, std::less<>> m_idCache;
-    float m_intrinsicWidth{0};
-    float m_intrinsicHeight{0};
+    float m_intrinsicWidth{-1.f};
+    float m_intrinsicHeight{-1.f};
 };
 
 class SVGUseElement final : public SVGGraphicsElement, public SVGURIReference {
@@ -365,7 +379,7 @@ private:
     SVGLength m_height;
 };
 
-class SVGImageElement final : public SVGGraphicsElement, public SVGURIReference {
+class SVGImageElement final : public SVGGraphicsElement {
 public:
     SVGImageElement(Document* document);
 
@@ -379,7 +393,7 @@ public:
     Rect fillBoundingBox() const final;
     Rect strokeBoundingBox() const final;
     void render(SVGRenderState& state) const final;
-    void layoutElement(const SVGLayoutState& state) final;
+    void parseAttribute(PropertyID id, const std::string& value) final;
 
 private:
     SVGLength m_x;
@@ -445,6 +459,7 @@ public:
 
     void applyClipMask(SVGRenderState& state) const;
     void applyClipPath(SVGRenderState& state) const;
+
     bool requiresMasking() const;
 
 private:
@@ -465,6 +480,7 @@ public:
     Rect maskRect(const SVGElement* element) const;
     Rect maskBoundingBox(const SVGElement* element) const;
     void applyMask(SVGRenderState& state) const;
+
     void layoutElement(const SVGLayoutState& state) final;
 
 private:

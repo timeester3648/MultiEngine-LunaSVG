@@ -9,16 +9,19 @@ namespace lunasvg {
 
 enum class PropertyID : uint8_t {
     Unknown = 0,
+    Alignment_Baseline,
+    Baseline_Shift,
     Class,
-    ClipPathUnits,
     Clip_Path,
     Clip_Rule,
+    ClipPathUnits,
     Color,
     Cx,
     Cy,
     D,
     Direction,
     Display,
+    Dominant_Baseline,
     Dx,
     Dy,
     Fill,
@@ -35,16 +38,18 @@ enum class PropertyID : uint8_t {
     Height,
     Href,
     Id,
-    MarkerHeight,
-    MarkerUnits,
-    MarkerWidth,
+    LengthAdjust,
+    Letter_Spacing,
     Marker_End,
     Marker_Mid,
     Marker_Start,
+    MarkerHeight,
+    MarkerUnits,
+    MarkerWidth,
     Mask,
+    Mask_Type,
     MaskContentUnits,
     MaskUnits,
-    Mask_Type,
     Offset,
     Opacity,
     Orient,
@@ -52,6 +57,7 @@ enum class PropertyID : uint8_t {
     PatternContentUnits,
     PatternTransform,
     PatternUnits,
+    Pointer_Events,
     Points,
     PreserveAspectRatio,
     R,
@@ -73,11 +79,15 @@ enum class PropertyID : uint8_t {
     Stroke_Width,
     Style,
     Text_Anchor,
+    Text_Orientation,
+    TextLength,
     Transform,
     ViewBox,
     Visibility,
-    WhiteSpace,
+    White_Space,
     Width,
+    Word_Spacing,
+    Writing_Mode,
     X,
     X1,
     X2,
@@ -151,6 +161,20 @@ enum class Overflow : uint8_t {
     Hidden
 };
 
+enum class PointerEvents : uint8_t {
+    None,
+    Auto,
+    Stroke,
+    Fill,
+    Painted,
+    Visible,
+    VisibleStroke,
+    VisibleFill,
+    VisiblePainted,
+    BoundingBox,
+    All
+};
+
 enum class FontStyle : uint8_t {
     Normal,
     Italic
@@ -159,6 +183,36 @@ enum class FontStyle : uint8_t {
 enum class FontWeight : uint8_t {
     Normal,
     Bold
+};
+
+enum class AlignmentBaseline : uint8_t {
+    Auto,
+    Baseline,
+    BeforeEdge,
+    TextBeforeEdge,
+    Middle,
+    Central,
+    AfterEdge,
+    TextAfterEdge,
+    Ideographic,
+    Alphabetic,
+    Hanging,
+    Mathematical
+};
+
+enum class DominantBaseline : uint8_t {
+    Auto,
+    UseScript,
+    NoChange,
+    ResetSize,
+    Ideographic,
+    Alphabetic,
+    Hanging,
+    Mathematical,
+    Central,
+    Middle,
+    TextAfterEdge,
+    TextBeforeEdge
 };
 
 enum class TextAnchor : uint8_t {
@@ -170,6 +224,16 @@ enum class TextAnchor : uint8_t {
 enum class WhiteSpace : uint8_t {
     Default,
     Preserve
+};
+
+enum class WritingMode : uint8_t {
+    Horizontal,
+    Vertical
+};
+
+enum class TextOrientation : uint8_t {
+    Mixed,
+    Upright
 };
 
 enum class Direction : uint8_t {
@@ -190,6 +254,11 @@ enum class Units : uint8_t {
 enum class MarkerUnits : uint8_t {
     StrokeWidth,
     UserSpaceOnUse
+};
+
+enum class LengthAdjust : uint8_t {
+    Spacing,
+    SpacingAndGlyphs
 };
 
 template<typename Enum>
@@ -325,6 +394,27 @@ private:
     const LengthDirection m_direction;
     const LengthNegativeMode m_negativeMode;
     LengthList m_values;
+};
+
+class BaselineShift {
+public:
+    enum class Type {
+        Baseline,
+        Sub,
+        Super,
+        Length
+    };
+
+    BaselineShift() = default;
+    BaselineShift(Type type) : m_type(type) {}
+    BaselineShift(const Length& length) : m_type(Type::Length), m_length(length) {}
+
+    Type type() const { return m_type; }
+    const Length& length() const { return m_length; }
+
+private:
+    Type m_type{Type::Baseline};
+    Length m_length;
 };
 
 class SVGNumber : public SVGProperty {

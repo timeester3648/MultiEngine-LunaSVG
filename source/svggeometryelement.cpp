@@ -58,6 +58,8 @@ void SVGGeometryElement::layoutElement(const SVGLayoutState& state)
 
 void SVGGeometryElement::updateMarkerPositions(SVGMarkerPositionList& positions, const SVGLayoutState& state)
 {
+    if(m_path.isEmpty())
+        return;
     auto markerStart = getMarker(state.marker_start());
     auto markerMid = getMarker(state.marker_mid());
     auto markerEnd = getMarker(state.marker_end());
@@ -138,7 +140,7 @@ void SVGGeometryElement::updateMarkerPositions(SVGMarkerPositionList& positions,
 
 void SVGGeometryElement::render(SVGRenderState& state) const
 {
-    if(m_path.isNull() || isVisibilityHidden() || isDisplayNone())
+    if(!isRenderable())
         return;
     SVGBlendInfo blendInfo(this);
     SVGRenderState newState(this, state, localTransform());
@@ -272,7 +274,7 @@ Rect SVGCircleElement::updateShape(Path& path)
 {
     LengthContext lengthContext(this);
     auto r = lengthContext.valueForLength(m_r);
-    if(r <= 0.f || r <= 0.f) {
+    if(r <= 0.f) {
         return Rect::Empty;
     }
 
